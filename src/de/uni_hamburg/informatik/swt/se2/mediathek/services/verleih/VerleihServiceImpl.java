@@ -2,6 +2,7 @@ package de.uni_hamburg.informatik.swt.se2.mediathek.services.verleih;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,11 @@ public class VerleihServiceImpl extends AbstractObservableService
      * die Angabe des Mediums möglich. Beispiel: _verleihkarten.get(medium)
      */
     private Map<Medium, Verleihkarte> _verleihkarten;
+    
+    private Map<Medium, LinkedList<Kunde>> _vormerkungen;
+    
+    
+    
 
     /**
      * Der Medienbestand.
@@ -67,6 +73,7 @@ public class VerleihServiceImpl extends AbstractObservableService
         _kundenstamm = kundenstamm;
         _medienbestand = medienbestand;
         _protokollierer = new VerleihProtokollierer();
+        _vormerkungen = new HashMap<>();
     }
 
     /**
@@ -202,15 +209,37 @@ public class VerleihServiceImpl extends AbstractObservableService
         assert istVerleihenMoeglich(kunde,
                 medien) : "Vorbedingung verletzt:  istVerleihenMoeglich(kunde, medien)";
 
-        for (Medium medium : medien)
-        {
-            Verleihkarte verleihkarte = new Verleihkarte(kunde, medium,
-                    ausleihDatum);
+        
+        	for (Medium medium : medien)
+            {
+                if (!istVerliehen(medium)) {
+                    LinkedList<Kunde> vormerker = _vormerkungen.get(medium);
+                    if (vormerker != null && !vormerker.isEmpty() && !vormerker.getFirst().equals(kunde)) {
+                        throw new IllegalStateException("Nur der erste Vormerker darf ausleihen.");
+                    }
 
-            _verleihkarten.put(medium, verleihkarte);
-            _protokollierer.protokolliere(
-                    VerleihProtokollierer.EREIGNIS_AUSLEIHE, verleihkarte);
-        }
+                    Verleihkarte verleihkarte = new Verleihkarte(kunde, medium, ausleihDatum);
+                    _verleihkarten.put(medium, verleihkarte);
+                    _protokollierer.protokolliere(VerleihProtokollierer.EREIGNIS_AUSLEIHE, verleihkarte);
+
+                    // Nachrücken der Vormerker
+                    if (vormerker != null && !vormerker.isEmpty()) {
+                        vormerker.removeFirst();
+                    }
+                } else {
+                    // Vormerkung automatisch durchführen, falls möglich
+                    _vormerkungen.putIfAbsent(medium, new LinkedList<>());
+                    LinkedList<Kunde> vormerker = _vormerkungen.get(medium);
+
+                    if (!vormerker.contains(kunde)) {
+                        if (vormerker.size() < 3) {
+                            vormerker.add(kunde);
+                        } else {
+                            throw new IllegalStateException("Medium ist verliehen und es existieren bereits 3 Vormerkungen.");
+                        }
+                    }
+                }
+            }
         // Was passiert wenn das Protokollieren mitten in der Schleife
         // schief geht? informiereUeberAenderung in einen finally Block?
         informiereUeberAenderung();
@@ -296,5 +325,40 @@ public class VerleihServiceImpl extends AbstractObservableService
         }
         return result;
     }
+    
+    public void merkeVor(Kunde kunde, Medium medium)
+    {
+    	if (istVerliehenAn(kunde, medium))
+    	{
+    		throw new IllegalStateException("Ein Kunde darf ein von ihm selbst ausgeliehenes Medium nicht vormerken.\"");
+    	}
+    	
+    	_vormerkungen.putIfAbsent(medium, new LinkedList<>());
+    	LinkedList<Kunde> vormerker = _vormerkungen.get(medium);
+    	
+    	if (vormerker.contains(kunde))
+    	{
+            throw new IllegalStateException("Kunde hat dieses Medium bereits vorgemerkt.");
+        }
+    	
+    	if (!vormerker.contains(kunde))
+    	{
+    	    if (vormerker.size() < 3)
+    	    {
+    	        vormerker.add(kunde);
+    	    }
+    	    else
+    	    {
+    	        throw new IllegalStateException("Es dürfen maximal 3 Vormerker pro Medium existieren.");
+    	    }
+    	}
+    	informiereUeberAenderung();
+    }
+    
+    public List<Kunde> getVormerkerFuer(Medium medium)
+    {
+        return _vormerkungen.getOrDefault(medium, new LinkedList<>());
+    }
+    
 
 }

@@ -209,7 +209,7 @@ public class VormerkWerkzeug
     {
         List<Medium> medien = _medienAuflisterWerkzeug.getSelectedMedien();
         Kunde kunde = _kundenAuflisterWerkzeug.getSelectedKunde();
-        // TODO für Aufgabenblatt 6 (nicht löschen): Prüfung muss noch eingebaut
+        //   
         // werden. Ist dies korrekt implementiert, wird der Vormerk-Button gemäß
         // der Anforderungen a), b), c) und e) aktiviert.
         boolean vormerkenMoeglich = (kunde != null) && !medien.isEmpty();
@@ -229,16 +229,34 @@ public class VormerkWerkzeug
             .getSelectedMedien();
         Kunde selectedKunde = _kundenAuflisterWerkzeug.getSelectedKunde();
         // TODO für Aufgabenblatt 6 (nicht löschen): Vormerken einbauen
-
+        
+        for (Medium medium : selectedMedien)
+        {
+            try
+            {
+                _verleihService.merkeVor(selectedKunde, medium);
+                
+            }
+            catch (IllegalStateException e)
+            {
+                // Zeigt eine spezifische Fehlermeldung mit Medium-Titel
+                javax.swing.JOptionPane.showMessageDialog(null,
+                        "Vormerken nicht möglich für Medium \"" + medium.getTitel() + "\":\n" + e.getMessage(),
+                        "Fehlermeldung", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
+        
+        
+
+    
 
     /**
      * Zeigt die Details der ausgewählten Medien.
      */
     private void zeigeAusgewaehlteMedien()
     {
-        List<Medium> selectedMedien = _medienAuflisterWerkzeug
-            .getSelectedMedien();
+        List<Medium> selectedMedien = _medienAuflisterWerkzeug.getSelectedMedien();
         _medienDetailAnzeigerWerkzeug.setMedien(selectedMedien);
     }
 

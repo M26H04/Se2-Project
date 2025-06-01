@@ -214,7 +214,8 @@ public class VerleihServiceImpl extends AbstractObservableService
             {
                 if (!istVerliehen(medium)) {
                     LinkedList<Kunde> vormerker = _vormerkungen.get(medium);
-                    if (vormerker != null && !vormerker.isEmpty() && !vormerker.getFirst().equals(kunde)) {
+                    if (vormerker != null && !vormerker.isEmpty() && !vormerker.getFirst().equals(kunde))
+                    {
                         throw new IllegalStateException("Nur der erste Vormerker darf ausleihen.");
                     }
 
@@ -222,19 +223,26 @@ public class VerleihServiceImpl extends AbstractObservableService
                     _verleihkarten.put(medium, verleihkarte);
                     _protokollierer.protokolliere(VerleihProtokollierer.EREIGNIS_AUSLEIHE, verleihkarte);
 
-                    // Nachrücken der Vormerker
-                    if (vormerker != null && !vormerker.isEmpty()) {
+                    
+                    if (vormerker != null && !vormerker.isEmpty())
+                    {
                         vormerker.removeFirst();
                     }
-                } else {
-                    // Vormerkung automatisch durchführen, falls möglich
+                }
+                else
+                {
+                    
                     _vormerkungen.putIfAbsent(medium, new LinkedList<>());
                     LinkedList<Kunde> vormerker = _vormerkungen.get(medium);
 
-                    if (!vormerker.contains(kunde)) {
-                        if (vormerker.size() < 3) {
+                    if (!vormerker.contains(kunde))
+                    {
+                        if (vormerker.size() < 3)
+                        {
                             vormerker.add(kunde);
-                        } else {
+                        }
+                        else
+                        {
                             throw new IllegalStateException("Medium ist verliehen und es existieren bereits 3 Vormerkungen.");
                         }
                     }

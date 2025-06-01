@@ -256,6 +256,11 @@ public class AusleihWerkzeug
         List<Medium> selectedMedien = _medienAuflisterWerkzeug
             .getSelectedMedien();
         _medienDetailAnzeigerWerkzeug.setMedien(selectedMedien);
+        
+        
+        
+        
+        
     }
 
     /**

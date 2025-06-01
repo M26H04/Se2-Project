@@ -212,7 +212,8 @@ public class VerleihServiceImpl extends AbstractObservableService
         
         	for (Medium medium : medien)
             {
-                if (!istVerliehen(medium)) {
+                if (!istVerliehen(medium))
+                {
                     LinkedList<Kunde> vormerker = _vormerkungen.get(medium);
                     if (vormerker != null && !vormerker.isEmpty() && !vormerker.getFirst().equals(kunde))
                     {
@@ -338,7 +339,7 @@ public class VerleihServiceImpl extends AbstractObservableService
     {
     	if (istVerliehenAn(kunde, medium))
     	{
-    		throw new IllegalStateException("Ein Kunde darf ein von ihm selbst ausgeliehenes Medium nicht vormerken.\"");
+    		throw new IllegalStateException("Ein Kunde darf ein von ihm selbst ausgeliehenes Medium nicht vormerken");
     	}
     	
     	_vormerkungen.putIfAbsent(medium, new LinkedList<>());

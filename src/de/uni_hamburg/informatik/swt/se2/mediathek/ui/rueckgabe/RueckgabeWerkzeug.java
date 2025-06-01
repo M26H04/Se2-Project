@@ -147,41 +147,10 @@ public class RueckgabeWerkzeug
         for (Verleihkarte verleihkarte : verleihkarten)
         {
             medien.add(verleihkarte.getMedium());
-            
         }
-        
         try
         {
             _verleihService.nimmZurueck(medien, Datum.heute());
-
-            // Nach dem Zurückgeben versuchen, an ersten Vormerker auszuleihen
-            for (Medium medium : medien)
-            {
-                List<Kunde> vormerker = _verleihService.getVormerkerFuer(medium);
-                if (!vormerker.isEmpty())
-                {
-                    Kunde ersterVormerker = vormerker.get(0);
-                    List<Medium> einzelnesMedium = new ArrayList<>();
-                    einzelnesMedium.add(medium);
-
-                    try
-                    {
-                        _verleihService.verleiheAn(ersterVormerker, einzelnesMedium, Datum.heute());
-                    }
-                    catch (ProtokollierException e)
-                    {
-                        JOptionPane.showMessageDialog(null,
-                                "Protokollieren beim automatischen Ausleihen fehlgeschlagen: " + e.getMessage(),
-                                "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
-                    }
-                    catch (IllegalStateException e)
-                    {
-                        JOptionPane.showMessageDialog(null,
-                                "Automatisches Ausleihen nicht möglich: " + e.getMessage(),
-                                "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
         }
         catch (ProtokollierException exception)
         {

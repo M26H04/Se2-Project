@@ -201,13 +201,16 @@ public class VerleihServiceImpl extends AbstractObservableService
     public void verleiheAn(Kunde kunde, List<Medium> medien, Datum ausleihDatum)
             throws ProtokollierException
     {
-        assert kundeImBestand(
+    	assert kunde != null : "Vorbedingung verletzt: kunde != null";
+    	assert medien != null : "Vorbedingung verletzt: medien != null";
+    	assert kundeImBestand(
                 kunde) : "Vorbedingung verletzt: kundeImBestand(kunde)";
         assert sindAlleNichtVerliehen(
                 medien) : "Vorbedingung verletzt: sindAlleNichtVerliehen(medien) ";
         assert ausleihDatum != null : "Vorbedingung verletzt: ausleihDatum != null";
         assert istVerleihenMoeglich(kunde,
                 medien) : "Vorbedingung verletzt:  istVerleihenMoeglich(kunde, medien)";
+        
 
         
         	for (Medium medium : medien)
@@ -335,8 +338,21 @@ public class VerleihServiceImpl extends AbstractObservableService
         return result;
     }
     
+    /**
+     * Merkt Medium für Kunden vor
+     * 
+     * @param kunde ausgewählter Kunde
+     * @param medium ausgewähltes Medium
+     * 
+     * @require kunde != null
+     * @require medium != null
+     * 
+     * @throws IllegalStateException 
+     */
     public void merkeVor(Kunde kunde, Medium medium)
     {
+    	assert kunde != null : "Vorbedingung verletzt: kunde != null";
+    	assert medium != null : "Vorbedingung verletzt: medium != null";
     	if (istVerliehenAn(kunde, medium))
     	{
     		throw new IllegalStateException("Ein Kunde darf ein von ihm selbst ausgeliehenes Medium nicht vormerken");
@@ -364,9 +380,19 @@ public class VerleihServiceImpl extends AbstractObservableService
     	informiereUeberAenderung();
     }
     
+    /**
+     * Getter Funktion, welche die vorvermerketen Medien der Kundenliste zuordnen
+     * 
+     * @param medium Das ausgewählte Medium
+     * 
+     * @return return LinkedList mit den Vorvermerkungen
+     * 
+     * @require medium != null
+     */
     public List<Kunde> getVormerkerFuer(Medium medium)
     {
-        return _vormerkungen.getOrDefault(medium, new LinkedList<>());
+        assert medium != null : "Vorbedingung verletzt: medium != null";
+    	return _vormerkungen.getOrDefault(medium, new LinkedList<>());
     }
     
 

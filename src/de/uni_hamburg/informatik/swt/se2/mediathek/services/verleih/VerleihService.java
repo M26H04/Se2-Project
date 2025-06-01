@@ -37,6 +37,8 @@ public interface VerleihService extends ObservableService
      * @require kundeImBestand(kunde)
      * @require sindAlleNichtVerliehen(medien)
      * @require ausleihDatum != null
+     * @require kunde != null
+     * @require medien != null
      * 
      * @ensure sindAlleVerliehenAn(kunde, medien)
      */

@@ -32,6 +32,10 @@ public class VerleihServiceImplTest
     private VerleihService _service;
     private List<Medium> _medienListe;
     private Kunde _vormerkkunde;
+    private Kunde _kunde1;
+    private Kunde _kunde2;
+    private Kunde _kunde3;
+
 
     public VerleihServiceImplTest()
     {
@@ -57,6 +61,12 @@ public class VerleihServiceImplTest
         _medienListe = medienbestand.getMedien();
         _service = new VerleihServiceImpl(kundenstamm, medienbestand,
                 new ArrayList<Verleihkarte>());
+        _kunde1 = new Kunde(new Kundennummer(187187), "Gzuz", "Straßenbande");
+    	_kunde2 = new Kunde(new Kundennummer(123456), "Susi", "Sonnenschein");
+    	_kunde3 = new Kunde(new Kundennummer(123457), "Kai", "Konrad");
+    	kundenstamm.fuegeKundenEin(_kunde1);
+    	kundenstamm.fuegeKundenEin(_kunde2);
+    	kundenstamm.fuegeKundenEin(_kunde3);
     }
 
     @Test
@@ -148,6 +158,52 @@ public class VerleihServiceImplTest
         _service.verleiheAn(_kunde,
                 Collections.singletonList(_medienListe.get(2)), _datum);
         assertFalse(ereignisse[0]);
+    }
+    
+    @Test
+    public void testMerkeVorDoppelt()
+    {
+    	Medium medium = _medienListe.get(0);
+    	try
+    	{
+	    	_service.merkeVor(_kunde, medium);
+	    	_service.merkeVor(_kunde, medium);
+    	}
+    	catch(IllegalStateException e)
+    	{
+    		
+    	}
+    	List<Kunde> kundenListe = _service.getVormerkerFuer(medium);
+    	assertEquals(1, kundenListe.size());
+    }
+    
+    @Test
+    public void testMerkeVorGroeßerDrei()
+    {
+    	Medium medium = _medienListe.get(0);
+    	try
+    	{
+    		_service.merkeVor(_kunde, medium);
+    		_service.merkeVor(_kunde1, medium);
+    		_service.merkeVor(_kunde2, medium);
+    		_service.merkeVor(_kunde3, medium);
+    	}
+    	catch(IllegalStateException e)
+    	{
+    		
+    	}
+    	List<Kunde> kundenListe = _service.getVormerkerFuer(medium);
+    	assertEquals(3, kundenListe.size());
+    }
+    
+    @Test
+    public void testGetVormerkerFuer()
+    {
+    	Medium medium = _medienListe.get(0);
+    	_service.merkeVor(_kunde, medium);
+    	List<Kunde> kundenListe = _service.getVormerkerFuer(medium);
+    	assertEquals(1, kundenListe.size());
+    	assertEquals(_kunde, kundenListe.get(0));
     }
 
 }

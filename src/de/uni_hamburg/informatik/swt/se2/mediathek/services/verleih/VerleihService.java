@@ -230,8 +230,28 @@ public interface VerleihService extends ObservableService
      */
     Verleihkarte getVerleihkarteFuer(Medium medium);
     
+    /**
+     * Getter Funktion, welche die vorvermerketen Medien der Kundenliste zuordnen
+     * 
+     * @param medium Das ausgewählte Medium
+     * 
+     * @return return LinkedList mit den Vorvermerkungen
+     * 
+     * @require medium != null
+     */
     public List<Kunde> getVormerkerFuer(Medium medium);
     
+    /**
+     * Merkt Medium für Kunden vor
+     * 
+     * @param kunde ausgewählter Kunde
+     * @param medium ausgewähltes Medium
+     * 
+     * @require kunde != null
+     * @require medium != null
+     * 
+     * @throws IllegalStateException 
+     */
     public void merkeVor(Kunde kunde, Medium medium);
-
+    
 }

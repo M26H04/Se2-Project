@@ -338,17 +338,7 @@ public class VerleihServiceImpl extends AbstractObservableService
         return result;
     }
     
-    /**
-     * Merkt Medium für Kunden vor
-     * 
-     * @param kunde ausgewählter Kunde
-     * @param medium ausgewähltes Medium
-     * 
-     * @require kunde != null
-     * @require medium != null
-     * 
-     * @throws IllegalStateException 
-     */
+    @Override
     public void merkeVor(Kunde kunde, Medium medium)
     {
     	assert kunde != null : "Vorbedingung verletzt: kunde != null";
@@ -380,20 +370,12 @@ public class VerleihServiceImpl extends AbstractObservableService
     	informiereUeberAenderung();
     }
     
-    /**
-     * Getter Funktion, welche die vorvermerketen Medien der Kundenliste zuordnen
-     * 
-     * @param medium Das ausgewählte Medium
-     * 
-     * @return return LinkedList mit den Vorvermerkungen
-     * 
-     * @require medium != null
-     */
+    @Override
     public List<Kunde> getVormerkerFuer(Medium medium)
     {
         assert medium != null : "Vorbedingung verletzt: medium != null";
     	return _vormerkungen.getOrDefault(medium, new LinkedList<>());
     }
     
-
+   
 }

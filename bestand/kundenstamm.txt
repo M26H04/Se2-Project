@@ -8,3 +8,4 @@
 123463;Chuck;Norris;Supermannweg 100;80331;München
 123464;Lara;Croft;Abenteuerallee 33;24104;Kiel
 123465;John. J.;Ava;Wurtstrasse 23;58507;Köln
+187187;Gzuz;Straßenbande;Bundesstraße 187;22670;Hamburg

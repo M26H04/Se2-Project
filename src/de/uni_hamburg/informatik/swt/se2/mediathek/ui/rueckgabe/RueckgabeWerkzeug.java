@@ -158,6 +158,7 @@ public class RueckgabeWerkzeug
         }
     }
 
+
     /**
      * Zeigt die Details der ausgewählten Verleihkarten an.
      */

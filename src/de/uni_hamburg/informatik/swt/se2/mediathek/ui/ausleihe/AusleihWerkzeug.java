@@ -240,6 +240,12 @@ public class AusleihWerkzeug
             JOptionPane.showMessageDialog(null, exception.getMessage(),
                     "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
         }
+        
+        catch (IllegalStateException exception)
+        {
+            JOptionPane.showMessageDialog(null, exception.getMessage(),
+                    "Fehlermeldung", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -250,6 +256,11 @@ public class AusleihWerkzeug
         List<Medium> selectedMedien = _medienAuflisterWerkzeug
             .getSelectedMedien();
         _medienDetailAnzeigerWerkzeug.setMedien(selectedMedien);
+        
+        
+        
+        
+        
     }
 
     /**

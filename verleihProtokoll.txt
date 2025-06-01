@@ -1,43 +1,22 @@
-Sun Jun 01 09:46:04 CEST 2025: Ausleihe
+
 CD:
     Titel: Breakaway
     Kommentar: Nachfolger vom Album Tankful
     Interpret: Kelly Clarkson
     Spiellänge: 87
-am 1.6.2025 verliehen an
-    Kundennummer: 123460
-    Name: Katarina Klum
-    Telefon: unbekannt
-    Anschrift:
-    Ottensener Strasse 10
-    22761 Hamburg
-Sun Jun 01 09:46:04 CEST 2025: Ausleihe
+
 CD:
     Titel: Disturbia
     Kommentar: gut
     Interpret: Rihanna
     Spiellänge: 90
-am 1.6.2025 verliehen an
-    Kundennummer: 123460
-    Name: Katarina Klum
-    Telefon: unbekannt
-    Anschrift:
-    Ottensener Strasse 10
-    22761 Hamburg
-Sun Jun 01 09:46:04 CEST 2025: Ausleihe
+
 CD:
     Titel: Garden State
     Kommentar: Soundtrack
     Interpret: Various
     Spiellänge: 56
-am 1.6.2025 verliehen an
-    Kundennummer: 123460
-    Name: Katarina Klum
-    Telefon: unbekannt
-    Anschrift:
-    Ottensener Strasse 10
-    22761 Hamburg
-Sun Jun 01 09:47:52 CEST 2025: Ausleihe
+
 CD:
     Titel: Breakaway
     Kommentar: Nachfolger vom Album Tankful
@@ -50,3 +29,4 @@ am 1.6.2025 verliehen an
     Anschrift:
     Abenteuerallee 33
     24104 Kiel
+

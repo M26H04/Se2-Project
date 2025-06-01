@@ -37,6 +37,8 @@ public interface VerleihService extends ObservableService
      * @require kundeImBestand(kunde)
      * @require sindAlleNichtVerliehen(medien)
      * @require ausleihDatum != null
+     * @require kunde != null
+     * @require medien != null
      * 
      * @ensure sindAlleVerliehenAn(kunde, medien)
      */
@@ -227,5 +229,9 @@ public interface VerleihService extends ObservableService
      * @ensure (result != null)
      */
     Verleihkarte getVerleihkarteFuer(Medium medium);
+    
+    public List<Kunde> getVormerkerFuer(Medium medium);
+    
+    public void merkeVor(Kunde kunde, Medium medium);
 
 }

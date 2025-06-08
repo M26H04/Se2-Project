@@ -254,4 +254,18 @@ public interface VerleihService extends ObservableService
      */
     public void merkeVor(Kunde kunde, Medium medium);
     
+    /**
+     * Überprüft ob vormerken möglich ist
+     * 
+     * @param kunde Kunde
+     * @param medien Medien 
+     * 
+     * @require kunde != null
+     * @require medium != null
+     * 
+     * @return true oder false
+     **/
+    public boolean istVormerkenMoeglich(Kunde kunde, Medium medium);
+
+    
 }

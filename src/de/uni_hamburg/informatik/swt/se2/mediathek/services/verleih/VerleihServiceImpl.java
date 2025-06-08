@@ -8,6 +8,7 @@ import java.util.Map;
 
 import de.uni_hamburg.informatik.swt.se2.mediathek.entitaeten.Kunde;
 import de.uni_hamburg.informatik.swt.se2.mediathek.entitaeten.Verleihkarte;
+import de.uni_hamburg.informatik.swt.se2.mediathek.entitaeten.Vormerkkarte;
 import de.uni_hamburg.informatik.swt.se2.mediathek.entitaeten.medien.Medium;
 import de.uni_hamburg.informatik.swt.se2.mediathek.services.AbstractObservableService;
 import de.uni_hamburg.informatik.swt.se2.mediathek.services.kundenstamm.KundenstammService;
@@ -31,7 +32,7 @@ public class VerleihServiceImpl extends AbstractObservableService
      */
     private Map<Medium, Verleihkarte> _verleihkarten;
     
-    private Map<Medium, LinkedList<Kunde>> _vormerkungen;
+    private Map<Medium, Vormerkkarte> _vormerkkarten;
     
     
     
@@ -73,7 +74,7 @@ public class VerleihServiceImpl extends AbstractObservableService
         _kundenstamm = kundenstamm;
         _medienbestand = medienbestand;
         _protokollierer = new VerleihProtokollierer();
-        _vormerkungen = new HashMap<>();
+        _vormerkkarten = new HashMap<>();
     }
 
     /**
@@ -217,38 +218,29 @@ public class VerleihServiceImpl extends AbstractObservableService
             {
                 if (!istVerliehen(medium))
                 {
-                    LinkedList<Kunde> vormerker = _vormerkungen.get(medium);
-                    if (vormerker != null && !vormerker.isEmpty() && !vormerker.getFirst().equals(kunde))
+                    if (_vormerkkarten.containsKey(medium))
                     {
-                        throw new IllegalStateException("Nur der erste Vormerker darf ausleihen.");
+	                	Vormerkkarte vormerker = _vormerkkarten.get(medium);
+	                    if (!vormerker.istVorgemerkt() || (vormerker.istErsterVormerker(kunde)))
+	                    {
+	                    	Verleihkarte verleihkarte = new Verleihkarte(kunde, medium, ausleihDatum);
+	                    	_verleihkarten.put(medium, verleihkarte);
+	                    	_protokollierer.protokolliere(VerleihProtokollierer.EREIGNIS_AUSLEIHE, verleihkarte);
+	                    }                
+	                    else
+	                    {
+	                    	throw new IllegalStateException("Nur der erste Vormerker darf ausleihen!");
+	                    }                    
+	                    if (!vormerker.istVorgemerkt())
+	                    {
+	                        vormerker.entferneKunde(kunde);
+	                    }  
                     }
-
-                    Verleihkarte verleihkarte = new Verleihkarte(kunde, medium, ausleihDatum);
-                    _verleihkarten.put(medium, verleihkarte);
-                    _protokollierer.protokolliere(VerleihProtokollierer.EREIGNIS_AUSLEIHE, verleihkarte);
-
-                    
-                    if (vormerker != null && !vormerker.isEmpty())
+                    else
                     {
-                        vormerker.removeFirst();
-                    }
-                }
-                else
-                {
-                    
-                    _vormerkungen.putIfAbsent(medium, new LinkedList<>());
-                    LinkedList<Kunde> vormerker = _vormerkungen.get(medium);
-
-                    if (!vormerker.contains(kunde))
-                    {
-                        if (vormerker.size() < 3)
-                        {
-                            vormerker.add(kunde);
-                        }
-                        else
-                        {
-                            throw new IllegalStateException("Medium ist verliehen und es existieren bereits 3 Vormerkungen.");
-                        }
+                    	Verleihkarte verleihkarte = new Verleihkarte(kunde, medium, ausleihDatum);
+                    	_verleihkarten.put(medium, verleihkarte);
+                    	_protokollierer.protokolliere(VerleihProtokollierer.EREIGNIS_AUSLEIHE, verleihkarte);
                     }
                 }
             }
@@ -343,29 +335,14 @@ public class VerleihServiceImpl extends AbstractObservableService
     {
     	assert kunde != null : "Vorbedingung verletzt: kunde != null";
     	assert medium != null : "Vorbedingung verletzt: medium != null";
-    	if (istVerliehenAn(kunde, medium))
-    	{
-    		throw new IllegalStateException("Ein Kunde darf ein von ihm selbst ausgeliehenes Medium nicht vormerken");
-    	}
-    	
-    	_vormerkungen.putIfAbsent(medium, new LinkedList<>());
-    	LinkedList<Kunde> vormerker = _vormerkungen.get(medium);
-    	
-    	if (vormerker.contains(kunde))
-    	{
-            throw new IllegalStateException("Kunde hat dieses Medium bereits vorgemerkt.");
-        }
-    	
-    	if (!vormerker.contains(kunde))
-    	{
-    	    if (vormerker.size() < 3)
-    	    {
-    	        vormerker.add(kunde);
-    	    }
-    	    else
-    	    {
-    	        throw new IllegalStateException("Es dürfen maximal 3 Vormerker pro Medium existieren.");
-    	    }
+    	if (!istVerliehenAn(kunde, medium))
+    	{   	
+	    	_vormerkkarten.putIfAbsent(medium, new Vormerkkarte(medium, kunde));
+	    	Vormerkkarte vormerker = _vormerkkarten.get(medium);
+	    	if (vormerker.istVormerkenMoeglich(kunde))
+	    	{
+	    		_vormerkkarten.get(medium).fuegeKundeHinzu(kunde);
+	    	}
     	}
     	informiereUeberAenderung();
     }
@@ -374,8 +351,27 @@ public class VerleihServiceImpl extends AbstractObservableService
     public List<Kunde> getVormerkerFuer(Medium medium)
     {
         assert medium != null : "Vorbedingung verletzt: medium != null";
-    	return _vormerkungen.getOrDefault(medium, new LinkedList<>());
+    	if (!_vormerkkarten.containsKey(medium))
+    	{
+    		return new LinkedList<Kunde>();
+    	}
+    	Vormerkkarte vormerkkarte = _vormerkkarten.get(medium);
+    	return vormerkkarte.getVormerker();
     }
     
+    @Override
+    public boolean istVormerkenMoeglich(Kunde kunde, Medium medium)
+    {
+	    if (!istVerliehenAn(kunde, medium))	
+	    {
+    		if (_vormerkkarten.containsKey(medium))
+	    	{	
+	    		Vormerkkarte karte = _vormerkkarten.get(medium);
+	    		return karte.istVormerkenMoeglich(kunde);
+	    	}
+	    	return true;
+	    }
+	    return false;
+    }
    
 }

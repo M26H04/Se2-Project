@@ -7,6 +7,8 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import de.uni_hamburg.informatik.swt.se2.mediathek.entitaeten.Kunde;
+import de.uni_hamburg.informatik.swt.se2.mediathek.entitaeten.Verleihkarte;
+import de.uni_hamburg.informatik.swt.se2.mediathek.entitaeten.Vormerkkarte;
 import de.uni_hamburg.informatik.swt.se2.mediathek.entitaeten.medien.Medium;
 import de.uni_hamburg.informatik.swt.se2.mediathek.services.ServiceObserver;
 import de.uni_hamburg.informatik.swt.se2.mediathek.services.kundenstamm.KundenstammService;
@@ -57,7 +59,7 @@ public class VormerkWerkzeug
      * Das Sub-Werkzeug zum Anzeigen der Details des selektieten Kunden.
      */
     private KundenDetailAnzeigerWerkzeug _kundenDetailAnzeigerWerkzeug;
-
+    
     /**
      * Initialisiert ein neues VormerkWerkzeug. Es wird die Benutzungsoberfläche
      * mit den Ausleihaktionen erzeugt, Beobachter an den Services registriert
@@ -212,8 +214,15 @@ public class VormerkWerkzeug
         //   
         // werden. Ist dies korrekt implementiert, wird der Vormerk-Button gemäß
         // der Anforderungen a), b), c) und e) aktiviert.
-        boolean vormerkenMoeglich = (kunde != null) && !medien.isEmpty();
-
+        boolean vormerkenMoeglich = false;
+        for(Medium medium : medien)
+        {
+        	vormerkenMoeglich = _verleihService.istVormerkenMoeglich(kunde, medium);
+        	if (!vormerkenMoeglich)
+        	{
+        		break;
+        	}
+        }
         return vormerkenMoeglich;
     }
 
@@ -225,25 +234,28 @@ public class VormerkWerkzeug
     private void merkeAusgewaehlteMedienVor()
     {
 
-        List<Medium> selectedMedien = _medienAuflisterWerkzeug
-            .getSelectedMedien();
-        Kunde selectedKunde = _kundenAuflisterWerkzeug.getSelectedKunde();
-        // TODO für Aufgabenblatt 6 (nicht löschen): Vormerken einbauen
-        
-        for (Medium medium : selectedMedien)
+        if (istVormerkenMoeglich())
         {
-            try
-            {
-                _verleihService.merkeVor(selectedKunde, medium);
-                
-            }
-            catch (IllegalStateException e)
-            {
-                // Zeigt eine spezifische Fehlermeldung mit Medium-Titel
-                javax.swing.JOptionPane.showMessageDialog(null,
-                        "Vormerken nicht möglich für Medium \"" + medium.getTitel() + "\":\n" + e.getMessage(),
-                        "Fehlermeldung", javax.swing.JOptionPane.ERROR_MESSAGE);
-            }
+	    	List<Medium> selectedMedien = _medienAuflisterWerkzeug
+	            .getSelectedMedien();
+	        Kunde selectedKunde = _kundenAuflisterWerkzeug.getSelectedKunde();
+	        // TODO für Aufgabenblatt 6 (nicht löschen): Vormerken einbauen
+	        
+	        for (Medium medium : selectedMedien)
+	        {
+	            try
+	            {
+	                _verleihService.merkeVor(selectedKunde, medium);
+	                
+	            }
+	            catch (IllegalStateException e)
+	            {
+	                // Zeigt eine spezifische Fehlermeldung mit Medium-Titel
+	                javax.swing.JOptionPane.showMessageDialog(null,
+	                        "Vormerken nicht möglich für Medium \"" + medium.getTitel() + "\":\n" + e.getMessage(),
+	                        "Fehlermeldung", javax.swing.JOptionPane.ERROR_MESSAGE);
+	            }
+	        }
         }
     }
         

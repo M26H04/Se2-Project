@@ -231,7 +231,7 @@ public class VerleihServiceImpl extends AbstractObservableService
 	                    {
 	                    	throw new IllegalStateException("Nur der erste Vormerker darf ausleihen!");
 	                    }                    
-	                    if (!vormerker.istVorgemerkt())
+	                    if (vormerker.istVorgemerkt())
 	                    {
 	                        vormerker.entferneKunde(kunde);
 	                    }  

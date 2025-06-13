@@ -249,6 +249,8 @@ public interface VerleihService extends ObservableService
      * 
      * @require kunde != null
      * @require medium != null
+     * @require mediumImBestand(medium)
+     * @require kundeImBestand(kunde)
      * 
      * @throws IllegalStateException 
      */

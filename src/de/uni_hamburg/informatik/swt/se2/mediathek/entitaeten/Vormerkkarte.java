@@ -1,6 +1,7 @@
 package de.uni_hamburg.informatik.swt.se2.mediathek.entitaeten;
 import java.util.LinkedList;
 import de.uni_hamburg.informatik.swt.se2.mediathek.entitaeten.medien.Medium;
+import de.uni_hamburg.informatik.swt.se2.mediathek.services.verleih.VerleihService;
 /**
  * Mit Hilfe von Vormerkkarten werden beim Vormerken eines Mediums alle relevanten
  * Daten notiert.

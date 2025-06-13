@@ -335,6 +335,8 @@ public class VerleihServiceImpl extends AbstractObservableService
     {
     	assert kunde != null : "Vorbedingung verletzt: kunde != null";
     	assert medium != null : "Vorbedingung verletzt: medium != null";
+    	assert kundeImBestand(kunde) : "Vorbedingung verletzt: kundeImBestand(kunde)";
+    	assert mediumImBestand(medium) : "Vorbedingung verletzt: mediumImBestand(kunde)";
     	if (!istVerliehenAn(kunde, medium))
     	{   	
 	    	_vormerkkarten.putIfAbsent(medium, new Vormerkkarte(medium, kunde));

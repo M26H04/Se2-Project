@@ -35,6 +35,7 @@ public class VerleihServiceImplTest
     private Kunde _kunde1;
     private Kunde _kunde2;
     private Kunde _kunde3;
+    private Kunde _kunde4;
 
 
     public VerleihServiceImplTest()
@@ -64,10 +65,12 @@ public class VerleihServiceImplTest
         _kunde1 = new Kunde(new Kundennummer(187187), "Gzuz", "Straßenbande");
     	_kunde2 = new Kunde(new Kundennummer(123456), "Susi", "Sonnenschein");
     	_kunde3 = new Kunde(new Kundennummer(123457), "Kai", "Konrad");
+    	_kunde4 = new Kunde(new Kundennummer(234567), "Hallo", "Tschüss");
     	kundenstamm.fuegeKundenEin(_kunde1);
     	kundenstamm.fuegeKundenEin(_kunde2);
     	kundenstamm.fuegeKundenEin(_kunde3);
-    }
+    	kundenstamm.fuegeKundenEin(_kunde4);   
+    	}
 
     @Test
     public void testeNachInitialisierungIstNichtsVerliehen() throws Exception
@@ -204,6 +207,25 @@ public class VerleihServiceImplTest
     	List<Kunde> kundenListe = _service.getVormerkerFuer(medium);
     	assertEquals(1, kundenListe.size());
     	assertEquals(_kunde, kundenListe.get(0));
+    }
+    
+    @Test 
+    public void istVormerkenMoeglichTest()
+    {
+    	try
+    	{
+    		_service.verleiheAn(_kunde, _medienListe, _datum);
+    		assertEquals(false, _service.istVormerkenMoeglich(_kunde, _medienListe.get(0)));
+    		assertEquals(true, _service.istVormerkenMoeglich(_kunde1, _medienListe.get(0)));
+    		_service.merkeVor(_kunde1, _medienListe.get(0));
+    		_service.merkeVor(_kunde2, _medienListe.get(0));
+    		_service.merkeVor(_kunde3, _medienListe.get(0));
+    		assertEquals(false, _service.istVormerkenMoeglich(_kunde4, _medienListe.get(0)));
+    	}
+    	catch (ProtokollierException e)
+    	{
+    		
+    	}
     }
 
 }
